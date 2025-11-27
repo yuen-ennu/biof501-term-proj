@@ -1,0 +1,40 @@
+conda activate optitype
+
+# run help command to test docker container
+docker run --rm -it fred2/optitype OptiTypePipeline.py -h
+
+# need paired end
+docker run --rm -v ~/BIOF501A/data:/data -it fred2/optitype \
+OptiTypePipeline.py -i /data/sample_R1.fastq /data/sample_R2.fastq -r -v -o /data/results
+
+
+step 1: input & preprocessing
+fastp --> preprocessing
+fastqc --> QC
+
+fastq-dump 
+
+Step 2: HLA caller with with HLA-LA
+- Optitype for RNA/WES, accurate for Class 1
+- HLA-LA for WGS/WES, works for class i and ii
+
+output example:
+A*02:01, A*24:02
+B*07:02, B*15:01
+C*07:02, C*04:01
+
+Step 3: retrieve reference HLA sequences
+from IMGT/HLA --> fasta files
+
+Step 4: aligh tumor reads to allel specific HLA references
+Hard to do, but can use HLA-LAoutputs HLA allele sequences from 
+
+
+
+    withName:OPTITYPE {
+        container = 'fred2/optitype:latest'
+    }
+
+        withName:OPTITYPE {
+        container = 'fred2/optitype:latest'
+    }

@@ -1,0 +1,28 @@
+# fastp     pre-processing
+# fastqc    QC
+# bwa   align tumor reads to allele reference
+# samtool   indexing and BAM handling
+
+
+name: hlaenv
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  - fastp
+  - fastqc
+  - bwa
+  - samtools
+  - bcftools
+  - python=3.10
+  - biopython
+  - pip
+  - optitype
+  - perl # hla-la
+  - perl-dbd-sqlite #hla-la
+  - pip:
+      - matplotlib
+      - pandas
+
