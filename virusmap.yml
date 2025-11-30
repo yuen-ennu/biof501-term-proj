@@ -1,0 +1,8 @@
+name: virusmap
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - nextflow
+  - openjdk=17

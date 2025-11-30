@@ -1,3 +1,11 @@
-.nextflow*
-work
-out_dir
+# ignore temp folders
+.nextflow/
+.nextflow.log.*
+work/
+rune/
+
+# personal notes
+instructions.txt
+
+# previously relevant files
+environment.yml
