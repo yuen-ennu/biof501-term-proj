@@ -11,7 +11,19 @@ Bacterial contributions to our microbiome, or bacteriome, and their effects on h
 
 Whole genome shotgun sequencing has become a staple in metagonomics, able to fragment collective genomic material of all organisms in a sample, and employing bioinformatics approaches, map them to reference genomes. Alignment to the correct genomes across biological kingdoms, is certainly a key step in informative taxonomic analyses. 
 
-We present VIRUSmap, a nextflow pipeline that identifies viral taxonomy from human metagenomic samples. The VIRUSmap pipeline is an easy to use, non-memory intensive collection of versatile and fast bioinformatics tools, made for raw, paired-end, short-read whole genome sequencing data. We first use [(Fastp)](https://github.com/OpenGene/fastp) for read pre-processing, then [(fastqc)](https://github.com/s-andrews/FastQC) to perform quality control. We then align these reads with the versatile aligner [(Minimap2)](https://github.com/lh3/minimap2) ideal for whole-genome sequencing, and for our viral genomes are sourced by NCBI’s [(RefSeq viral genome collection)](https://benlangmead.github.io/aws-indexes/k2). Moving forward, we only take the unmapped reads, assuming these reads are enriched for viral sequences compared to the original metagenomic data, which we perform the viral taxonification and classification on. To do so, we use [(Kraken2)](https://github.com/DerrickWood/kraken2) and [(Bracken)](https://github.com/jenniferlu717/Bracken) for rapid taxonomic classification and abundance estimation respectively, allowing us to identify the viral sequences. With [(KrakenTools)](https://github.com/jenniferlu717/KrakenTools) we enable downstream processing for visualization with [(Krona)](https://github.com/marbl/Krona/wiki).
+We present VIRUSmap, a nextflow pipeline that identifies viral taxonomy from human metagenomic samples. The VIRUSmap pipeline is an easy to use, non-memory intensive collection of versatile and fast bioinformatics tools, made for raw, paired-end, short-read whole genome sequencing data.  
+We start with raw metagenomic sequence data from NCBI’s Sequence Read Archive [(SRA)](https://www.ncbi.nlm.nih.gov/sra) database and directly input the SRA ID. This will input all sample runs into the pipeline from the same BioSample ID. If there are runs that are not paired-end, they will be excluded. 
+We first use [(Fastp)](https://github.com/OpenGene/fastp) for read pre-processing, then [(fastqc)](https://github.com/s-andrews/FastQC) to perform quality control. We then align these reads with the versatile aligner [(Minimap2)](https://github.com/lh3/minimap2) ideal for whole-genome sequencing, and for our viral genomes are sourced by NCBI’s [(RefSeq viral genome collection)](https://benlangmead.github.io/aws-indexes/k2). Moving forward, we only take the unmapped reads, assuming these reads are enriched for viral sequences compared to the original metagenomic data, which we perform the viral taxonification and classification on. To do so, we use [(Kraken2)](https://github.com/DerrickWood/kraken2) and [(Bracken)](https://github.com/jenniferlu717/Bracken) for rapid taxonomic classification and abundance estimation respectively, allowing us to identify the viral sequences. With [(KrakenTools)](https://github.com/jenniferlu717/KrakenTools) we enable downstream processing for visualization with [(Krona)](https://github.com/marbl/Krona/wiki).
+
+
+## Example 
+VIRUSmap.nf is preloaded with an example from the [(American Gut Project)](https://www.ncbi.nlm.nih.gov/bioproject/PRJEB11419). BioSample:[(SAMEA8947847)](https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SAMEA8947847&o=bytes_l%3Aa). 
+
+Below are the runs performed on this sample. The AMPLICON Assay Type is automatically filtered from the VIRUSmap pipeline.
+visuals/multiple_assay_handling_example.png
+
+
+
 
 
 ## VIRUSmap dependencies
