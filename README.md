@@ -100,7 +100,3 @@ Stephens Z, O’Brien D, Mrunal Dehankar, Roberts LR, Iyer RK, Kocher JP. Exogen
 
 <a id="6">[6]</a>
 Bai GH, Lin SC, Hsu YH, Chen SY. The Human Virome: Viral Metagenomics, Relations with Human Diseases, and Therapeutic Applications. Viruses. 2022;14(2):278.
-
-
-nextflow run </home/ylau/scratch/biof501-term-proj/VIRUSmap.nf> -preview -with-dag VIRUSmap_dag.dot
-nextflow run <VIRUSmap.nf> -with-dag VIRUSmap.dot
