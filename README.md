@@ -27,7 +27,7 @@ Below are the runs performed on this sample. The AMPLICON Assay Type is automati
 
 
 ## VIRUSmap dependencies
-To use VIRUSmap, the user will need to have [(conda)](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) and [(git)](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed. This workflow does not require you have Docker and uses singularity to read the relevant Docker containers.
+To use VIRUSmap, the user will need to have [(conda)](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html), [(git)](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), and [(singularity)](https://docs.sylabs.io/guides/3.0/user-guide/installation.html) installed. This workflow does not require you have Docker (you may, still, just alter the nextflow.config to enable docker and disable singularity), and uses singularity to read the relevant Docker containers.
 
 This workflow installs the following packages:
 ```
