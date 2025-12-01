@@ -2,21 +2,19 @@
 nextflow.enable.dsl=2
 
 
-workflow {
-    // ids = ["sra1","sra2", "sra3"]
+//  ====================================================== //
+// PAIRED-END WHOLE GENOME SEQUENCING VIRAL CLASSIFICATION // 
+//  ====================================================== //
 
+
+
+workflow {
     // Download references
     ch_human_ref = DOWNLOAD_HUMAN_DB()
     ch_viral_ref = DOWNLOAD_VIRAL_DB()
 
-    // SRA_ID(s) of human gut metagenome smaples (WHOLE GENOME SEQUENCING)
-    ids = ["ERR14295483"] 
-        // gut (3) - wgs (2) and amplicon(1)
-        // running into probelm w read 3
-
-    // ids = ["ERR13983914"]  // human gut metagenome
-
-
+    // SRA_ID(s) 
+    ids = ["ERR14295483"]  // human gut metaganome sample
 
     // Preprocessing and QC
     ch_reads = Channel.fromSRA(ids)
@@ -27,32 +25,33 @@ workflow {
     // Find non-human-mapped reads
     ch_unmapped = MINIMAP2(ch_fastp, ch_human_ref)
 
-    // Classification of viral reads
+    // Classification and abundance
     ch_viral_db = MAKE_VIRAL_DB(ch_viral_ref)
     ch_kraken2 = KRAKEN2(ch_unmapped, ch_viral_db)
     ch_bracken = BRACKEN(ch_kraken2, ch_viral_db)
 
     // Viral taxonomy visualization 
-    KRONA(ch_bracken)
+    // ch_k2k_script = Channel.fromPath("${projectDir}/viral_ref_db/KrakenTools/kreport2krona.py")
+    ch_krona_txt = KREPORT2KRONA(ch_bracken)
+    KRONA(ch_krona_txt)
 }
 
 
 process DOWNLOAD_HUMAN_DB {
     errorStrategy 'retry'
     maxRetries 2
-    tag "Download Reference"
     output:
         path "hg38.fa.gz"
     script:
     """
     echo "DOWNLOADING HUMAN REFERENCE..."
-    curl -L https://hgdownload.cse.ucsc.edu/goldenpath/hg38/bigZips/hg38.fa.gz -o hg38.fa.gz
+    curl -L https://hgdownload.cse.ucsc.edu/goldenpath/hg38/bigZips/hg38.fa.gz \
+         -o hg38.fa.gz
     """
 }
 
-
 process FASTP {
-    publishDir "${projectDir}/data/fastp"
+    publishDir "${projectDir}/VIRUSmap_outputs/1_fastp"
     input:
         tuple val(sample), path(reads)
     output:
@@ -72,10 +71,10 @@ process FASTP {
         ${r2 ? "-O fastp_${sample}_2.fastq" : ""} \\
         --html "fastp_${sample}.fastp.html"
     """
-    }
+}
 
 process FASTQC {
-    publishDir "${projectDir}/data/fastqc"
+    publishDir "${projectDir}/VIRUSmap_outputs/2_fastqc"
     input:
         tuple val(sample), path(r1), path(r2)
     output:
@@ -87,7 +86,7 @@ process FASTQC {
 }
 
 process MINIMAP2 {
-    publishDir "${projectDir}/data/minimap2"
+    publishDir "${projectDir}/VIRUSmap_outputs/3_minimap2"
     input:
         tuple val(sample), path(r1), path(r2)
         path(reference)
@@ -95,7 +94,7 @@ process MINIMAP2 {
         tuple val(sample), 
             path("${sample}_unmapped_1.fastq"), 
             path("${sample}_unmapped_2.fastq")
-   script:
+    script:
     """
     echo "Finding non-hg38 reads..."
     minimap2 -a -x sr ${reference} ${r1} ${r2} \
@@ -111,13 +110,13 @@ process MINIMAP2 {
 process DOWNLOAD_VIRAL_DB{
     errorStrategy 'retry'
     maxRetries 2
-    tag "Download Kraken2 Viral Reference"
     output:
         path "k2_viral_20251015.tar.gz"
     script:
     """
     echo "Downloading KRAKEN2 viral reference..."
-    curl -L https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20251015.tar.gz -o k2_viral_20251015.tar.gz
+    curl -L https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20251015.tar.gz \
+         -o k2_viral_20251015.tar.gz
     """
 }
 process MAKE_VIRAL_DB {
@@ -134,7 +133,7 @@ process MAKE_VIRAL_DB {
 }
 
 process KRAKEN2 {
-    publishDir "${projectDir}/data/kraken2"
+    publishDir "${projectDir}/VIRUSmap_outputs/4_kraken2"
     input:
         tuple val(sample), path(r1), path(r2)
         path viral_db_folder
@@ -151,7 +150,7 @@ process KRAKEN2 {
 }
 
 process BRACKEN {
-    publishDir "${projectDir}/data/bracken"
+    publishDir "${projectDir}/VIRUSmap_outputs/5_bracken"
     input:
         tuple val(sample), path(kraken_report)
         path viral_db_folder
@@ -168,21 +167,20 @@ process BRACKEN {
     """
 }
 
-process KRAKEN2KRONA {
-    publishDir "${projectDir}/data/kreport2krona"
+process KREPORT2KRONA {
+    publishDir "${projectDir}/VIRUSmap_outputs/6_kreport2krona"
     input:
         tuple val(sample), path(bracken_report)
     output:
         tuple val(sample), path("${sample}_krona.txt")
     script:
     """
-    python ${projectDir}/KrakenTools/kreport2krona.py -r ${bracken_report} \
-        -o ${sample}_krona.txt --no-intermediate-ranks
+    kreport2krona.py -r ${bracken_report} -o ${sample}_krona.txt --no-intermediate-ranks
     """
 }
 
 process KRONA {
-    publishDir "${projectDir}/data/krona"
+    publishDir "${projectDir}/VIRUSmap_outputs/7_krona"
     input:
         tuple val(sample), path(krona_result)
     output:

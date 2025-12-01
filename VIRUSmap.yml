@@ -1,4 +1,4 @@
-name: virusmap
+name: VIRUSMAP
 channels:
   - conda-forge
   - bioconda
@@ -6,3 +6,4 @@ channels:
 dependencies:
   - nextflow
   - openjdk=17
+  - krakentools=1.2
