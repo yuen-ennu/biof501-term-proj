@@ -77,7 +77,7 @@ See 5_bracken folder for percentage abundance within unmapped reads of viral spe
 
 The final outputs web-interactive visualization is the {sample}_krona.html from the VIRUSmap_outputs/7_krona folder. This provides the estimated abundance of predicted viruses present in our sample. 
 Below is an example of the visual output from the viral sequences from our sample.
-![ERR14295483.svg](visuals/ERR14295483.svg)
+![ERR14295483 krona](visuals/krona_vis.png)
 
 
 
