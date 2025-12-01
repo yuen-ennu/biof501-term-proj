@@ -1,8 +1,0 @@
-name: biof501a
-channels:
-  - bioconda
-  - conda-forge
-  - defaults
-dependencies:
-  - nextflow
-  - openjdk=17
