@@ -4,6 +4,6 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - nextflow
-  - openjdk=17
-  - krakentools=1.2
+  - nextflow=25.10.2
+  - openjdk=17.0.17
+  - krakentools=1.2.1

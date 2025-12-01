@@ -15,19 +15,35 @@ We present VIRUSmap, a nextflow pipeline that identifies viral taxonomy from hum
 We start with raw metagenomic sequence data from NCBI’s Sequence Read Archive [(SRA)](https://www.ncbi.nlm.nih.gov/sra) database and directly input the SRA ID. This will input all sample runs into the pipeline from the same BioSample ID. If there are runs that are not paired-end, they will be excluded. 
 We first use [(Fastp)](https://github.com/OpenGene/fastp) for read pre-processing, then [(fastqc)](https://github.com/s-andrews/FastQC) to perform quality control. We then align these reads with the versatile aligner [(Minimap2)](https://github.com/lh3/minimap2) ideal for whole-genome sequencing, and for our viral genomes are sourced by NCBI’s [(RefSeq viral genome collection)](https://benlangmead.github.io/aws-indexes/k2). Moving forward, we only take the unmapped reads, assuming these reads are enriched for viral sequences compared to the original metagenomic data, which we perform the viral taxonification and classification on. To do so, we use [(Kraken2)](https://github.com/DerrickWood/kraken2) and [(Bracken)](https://github.com/jenniferlu717/Bracken) for rapid taxonomic classification and abundance estimation respectively, allowing us to identify the viral sequences. With [(KrakenTools)](https://github.com/jenniferlu717/KrakenTools) we enable downstream processing for visualization with [(Krona)](https://github.com/marbl/Krona/wiki).
 
+## DAG of VIRUSmap pipeline.
+![DAG of VIRUSmap pipeline](visuals/VIRUSmap_dag.png)
+
 
 ## Example 
 VIRUSmap.nf is preloaded with an example from the [(American Gut Project)](https://www.ncbi.nlm.nih.gov/bioproject/PRJEB11419). BioSample:[(SAMEA8947847)](https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SAMEA8947847&o=bytes_l%3Aa). 
 
 Below are the runs performed on this sample. The AMPLICON Assay Type is automatically filtered from the VIRUSmap pipeline.
-visuals/multiple_assay_handling_example.png
-
-
-
+![Multi-assay example.](visuals/multiple_assay_handling_example.png)
 
 
 ## VIRUSmap dependencies
-To use VIRUSmap, the user will need to have [(conda)](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) and [(git)](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed.
+To use VIRUSmap, the user will need to have [(conda)](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) and [(git)](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed. This workflow does not require you have Docker and uses singularity to read the relevant Docker containers.
+
+This workflow installs the following packages:
+```
+  - nextflow=25.10.2
+  - openjdk=17.0.17
+  - krakentools=1.2.1
+```
+
+The containers are:
+- fastp(`bromberglab/fastp:latest`)
+- fastqc(`staphb/fastqc:latest`)
+- minimap2(`niemasd/minimap2_samtools:latest`)
+- kraken2(`staphb/kraken2:latest`)
+- bracken(`staphb/bracken:latest`)
+- krona(`nanazoo/krona:latest`)
+
 
 ## Installtaion
 1. Deactivate any existing conda environemnt. 
@@ -52,7 +68,16 @@ conda activate VIRUSMAP
 nextflow run VIRUSmap.nf -c nextflow.config
 ```
 
-## Outputs (see )
+## Outputs 
+Outputs with taxonomic classification and abundance data are in the `VIRUSmap_outputs/` folder, with outputs from each step. 
+
+See 2_fastqc in a web browser to view quality metrics for processed reads.
+See 4_kraken2 folder for tab-delimited summary of viral taxonomic classification with rank, number of classified reads, and percentage of reads assigned.
+See 5_bracken folder for percentage abundance within unmapped reads of viral species.
+
+The final outputs web-interactive visualization is the {sample}_krona.html from the VIRUSmap_outputs/7_krona folder. This provides the estimated abundance of predicted viruses present in our sample. 
+Below is an example of the visual output from the viral sequences from our sample.
+![ERR14295483.svg](visuals/ERR14295483.svg)
 
 
 
